@@ -179,6 +179,874 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/07/27/games104/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="姚">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yao's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/07/27/games104/" class="post-title-link" itemprop="url">games104</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-27 11:37:53 / 修改时间：11:42:16" itemprop="dateCreated datePublished" datetime="2025-07-27T11:37:53+08:00">2025-07-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="分层架构设计"><a href="#分层架构设计" class="headerlink" title="分层架构设计"></a><strong>分层架构设计</strong></h1><p>游戏引擎采用<strong>五层洋葱模型</strong>，各层职责清晰、低耦合：</p>
+<ol>
+<li><p><strong>平台层 (Platform Layer)</strong>  </p>
+<ul>
+<li>跨平台兼容性（Windows&#x2F;Linux&#x2F;MacOS&#x2F;主机）</li>
+<li>抽象硬件差异：文件系统路径转换、图形API接口（RHI）、内存架构（如PPU&#x2F;SPU）</li>
+<li>依赖平台SDK（如Steam&#x2F;Epic SDK）</li>
+</ul>
+</li>
+<li><p><strong>核心层 (Core Layer)</strong>  </p>
+<ul>
+<li><strong>高性能基础组件</strong>：<ul>
+<li>数学库（矩阵&#x2F;四元数&#x2F;SIMD优化，如Quake III的<code>1/sqrt(x)</code>魔数算法）</li>
+<li>内存管理（内存池&#x2F;缓存对齐&#x2F;防碎片）</li>
+<li>数据结构（自定义容器优于STL）</li>
+</ul>
+</li>
+<li>关键系统：调试日志、RTTI反射、异步I&#x2F;O、单元测试</li>
+</ul>
+</li>
+<li><p><strong>资源层 (Resource Layer)</strong>  </p>
+<ul>
+<li><strong>全生命周期资产管理</strong>：<ul>
+<li>离线预处理：定义元文件格式（如<code>.ast</code>），生成GUID保障引用安全</li>
+<li>运行时虚拟文件系统 + <strong>句柄(Handle)</strong> 管理资源加载&#x2F;卸载</li>
+</ul>
+</li>
+<li>资源类型：模型&#x2F;纹理&#x2F;材质&#x2F;动画&#x2F;场景等，按需动态释放</li>
+</ul>
+</li>
+<li><p><strong>功能层 (Function Layer)</strong>  </p>
+<ul>
+<li><p><strong>游戏循环(Game Loop)</strong> 驱动核心模块：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">tickLogic</span><span class="params">(<span class="type">float</span> dt)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">tickCamera</span>(dt);</span><br><span class="line">    <span class="built_in">tickAnimation</span>(dt);  <span class="comment">// 驱动骨骼动画</span></span><br><span class="line">    <span class="built_in">tickPhysics</span>(dt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多线程支持：Job系统并行处理（动画&#x2F;物理&#x2F;渲染）</p>
+</li>
+<li><p>模块化设计：渲染&#x2F;物理&#x2F;动画&#x2F;脚本&#x2F;AI</p>
+</li>
+</ul>
+</li>
+<li><p><strong>工具层 (Tool Layer)</strong>  </p>
+<ul>
+<li>创作生态支持：<ul>
+<li>编辑器套件（场景&#x2F;动画&#x2F;Shader&#x2F;UI编辑器）</li>
+<li>DCC工具链集成（Maya&#x2F;Blender&#x2F;Houdini&#x2F;fmod）</li>
+<li>第三方中间件对接（PhysX&#x2F;SpeedTree）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="分层优势"><a href="#分层优势" class="headerlink" title="分层优势"></a><strong>分层优势</strong></h3><ul>
+<li><strong>解耦复杂性</strong>：下层稳定（如数学库），上层灵活（如工具链）</li>
+<li><strong>跨平台扩展</strong>：平台层隔离硬件差异，上层无需修改</li>
+<li><strong>性能优化</strong>：核心层专注底层效率（如内存池&#x2F;SIMD）</li>
+<li><strong>工作流支持</strong>：工具层赋能非程序员创作内容</li>
+</ul>
+<hr>
+<h3 id="关键结论"><a href="#关键结论" class="headerlink" title="关键结论"></a><strong>关键结论</strong></h3><ol>
+<li><strong>Tick机制</strong>是游戏世界的”心跳”，驱动所有子系统更新</li>
+<li><strong>资源句柄</strong>优于直接指针，保障内存安全</li>
+<li><strong>分层设计</strong>适应技术演进：下层迭代慢，上层可快速扩展</li>
+<li><strong>现代引擎</strong> ≈ 中间件集成框架（PhysX&#x2F;fmod等） + 自研核心</li>
+</ol>
+<h1 id="游戏世界构成与管理"><a href="#游戏世界构成与管理" class="headerlink" title="游戏世界构成与管理"></a>游戏世界构成与管理</h1><h3 id="一、游戏世界的组成"><a href="#一、游戏世界的组成" class="headerlink" title="一、游戏世界的组成"></a><strong>一、游戏世界的组成</strong></h3><ol>
+<li><p><strong>静态对象</strong>  </p>
+<ul>
+<li>功能性物体：无人机、防空导弹、坦克、火炮、士兵  </li>
+<li>环境物体：小屋、棚屋、石头、瞭望塔、箱子  </li>
+<li>自然环境：天空、植被、地形</li>
+</ul>
+</li>
+<li><p><strong>动态与逻辑对象</strong>  </p>
+<ul>
+<li>空气墙、触发区域（Trigger Area）、导航网格（Navigation Mesh）  </li>
+<li><strong>核心观点</strong>：万物皆游戏对象（Game Object, GO）</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="二、游戏对象的描述方式"><a href="#二、游戏对象的描述方式" class="headerlink" title="二、游戏对象的描述方式"></a><strong>二、游戏对象的描述方式</strong></h3><h4 id="1-面向对象继承模式（早期方案）"><a href="#1-面向对象继承模式（早期方案）" class="headerlink" title="1. 面向对象继承模式（早期方案）"></a><strong>1. 面向对象继承模式（早期方案）</strong></h4><ul>
+<li><p><strong>示例：无人机（Drone）</strong>  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Drone</span> &#123;</span><br><span class="line">    Vector3 position;  <span class="comment">// 位置</span></span><br><span class="line">    <span class="type">float</span> health;      <span class="comment">// 生命值</span></span><br><span class="line">    <span class="type">float</span> battery;     <span class="comment">// 电量</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">move</span><span class="params">()</span></span>;       <span class="comment">// 移动行为</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">scout</span><span class="params">()</span></span>;      <span class="comment">// 侦察行为</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>武装无人机扩展（继承问题）</strong><br>需新增 <code>ammo</code> 属性和 <code>fire()</code> 行为，但继承导致代码冗余（如 <code>ArmedDrone</code> 重复 <code>Drone</code> 属性）<br><strong>缺点</strong>：现实世界分类复杂（如“飞机”无法完美归类），难以灵活扩展。</p>
+</li>
+</ul>
+<h4 id="2-组件化模式（主流方案）"><a href="#2-组件化模式（主流方案）" class="headerlink" title="2. 组件化模式（主流方案）"></a><strong>2. 组件化模式（主流方案）</strong></h4><ul>
+<li><p><strong>核心思想</strong>：通过组合组件（Component）构建对象<br><strong>组件示例</strong>：  </p>
+<ul>
+<li><code>Transform</code>（位置&#x2F;旋转&#x2F;缩放）  </li>
+<li><code>Model</code>（3D模型）  </li>
+<li><code>Motor</code>（动力系统）  </li>
+<li><code>Physics</code>（物理模拟）  </li>
+<li><code>AI</code>（人工智能）</li>
+</ul>
+</li>
+<li><p><strong>代码实现</strong>：  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GameObject</span> &#123;</span><br><span class="line">    vector&lt;ComponentBase*&gt; components; <span class="comment">// 组件容器</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">tick</span><span class="params">()</span></span>; </span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TransformComponent</span> : <span class="keyword">public</span> ComponentBase &#123; </span><br><span class="line">    Vector3 position; </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">tick</span><span class="params">()</span></span>; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>武装无人机组装</strong>：<br>复用 <code>Transform</code>&#x2F;<code>Model</code> 等组件，仅需替换 <code>AI</code> 为 <code>Combat</code> 组件。</p>
+</li>
+</ul>
+<hr>
+<h3 id="三、游戏对象更新机制"><a href="#三、游戏对象更新机制" class="headerlink" title="三、游戏对象更新机制"></a><strong>三、游戏对象更新机制</strong></h3><h4 id="1-基于对象的更新（Object-based-Tick）"><a href="#1-基于对象的更新（Object-based-Tick）" class="headerlink" title="1. 基于对象的更新（Object-based Tick）"></a><strong>1. 基于对象的更新（Object-based Tick）</strong></h4><ul>
+<li><p><strong>流程</strong>：逐对象顺序执行所有组件的 <code>tick()</code>  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GO1: [Transform→Motor→AI→...]</span><br><span class="line">GO2: [Transform→Motor→AI→...]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>优点</strong>：逻辑直观，易于调试  </p>
+</li>
+<li><p><strong>缺点</strong>：效率低（无法并行，缓存命中率低）</p>
+</li>
+</ul>
+<h4 id="2-基于组件的更新（Component-based-Tick）"><a href="#2-基于组件的更新（Component-based-Tick）" class="headerlink" title="2. 基于组件的更新（Component-based Tick）"></a><strong>2. 基于组件的更新（Component-based Tick）</strong></h4><ul>
+<li><p><strong>流程</strong>：按组件类型批量更新  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">所有对象的Transform → 所有对象的Motor → 所有对象的AI</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>优点</strong>：  </p>
+<ul>
+<li>支持并行处理  </li>
+<li>减少CPU缓存未命中（连续内存访问）  </li>
+<li><strong>更高性能</strong>（现代引擎首选）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2025/07/25/hello-world/ge-20250710134819031.png"></p>
+<hr>
+<h3 id="四、游戏对象交互机制"><a href="#四、游戏对象交互机制" class="headerlink" title="四、游戏对象交互机制"></a><strong>四、游戏对象交互机制</strong></h3><h4 id="1-硬编码交互（不推荐）"><a href="#1-硬编码交互（不推荐）" class="headerlink" title="1. 硬编码交互（不推荐）"></a><strong>1. 硬编码交互（不推荐）</strong></h4>   <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Bomb::explode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(go_type) &#123;</span><br><span class="line">        <span class="keyword">case</span> GoType.soldier: <span class="comment">/* 处理士兵 */</span> ;</span><br><span class="line">        <span class="keyword">case</span> GoType.drone:   <span class="comment">/* 处理无人机 */</span> ;</span><br><span class="line">        ... <span class="comment">// 需枚举所有类型</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>   <strong>缺点</strong>：耦合度高，新增类型需修改爆炸逻辑。</p>
+<h4 id="2-事件驱动（推荐方案）"><a href="#2-事件驱动（推荐方案）" class="headerlink" title="2. 事件驱动（推荐方案）"></a><strong>2. 事件驱动（推荐方案）</strong></h4><ul>
+<li><p><strong>流程</strong>：  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Bomb::explode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">sendExplodeEvent</span>(go_id); <span class="comment">// 发送事件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>接收方</strong>：士兵、坦克等对象自行实现事件处理逻辑  </p>
+</li>
+<li><p><strong>优点</strong>：解耦对象，扩展性强（新增对象无需修改事件源）</p>
+</li>
+</ul>
+<hr>
+<h3 id="五、场景管理"><a href="#五、场景管理" class="headerlink" title="五、场景管理"></a><strong>五、场景管理</strong></h3><h4 id="核心挑战：高效查询对象（如位置检索）"><a href="#核心挑战：高效查询对象（如位置检索）" class="headerlink" title="核心挑战：高效查询对象（如位置检索）"></a><strong>核心挑战</strong>：高效查询对象（如位置检索）</h4><ol>
+<li><p><strong>空间分割策略</strong>  </p>
+<ul>
+<li><strong>网格（Grid）</strong>：均匀划分空间，适合小型场景  </li>
+<li><strong>四叉树（Quadtree）</strong>：递归分割2D空间（如地表）  </li>
+<li><strong>八叉树（Octree）</strong>：递归分割3D空间（如开放世界）  </li>
+<li><strong>BVH（包围体层次）</strong>：动态对象的高效碰撞检测</li>
+</ul>
+</li>
+<li><p><strong>场景图（Scene Graph）</strong>  </p>
+<ul>
+<li>树形结构管理父子对象（如角色手持武器）  </li>
+<li>支持局部坐标变换传递</li>
+</ul>
+</li>
+</ol>
+<h1 id="游戏引擎的渲染"><a href="#游戏引擎的渲染" class="headerlink" title="游戏引擎的渲染"></a>游戏引擎的渲染</h1><h2 id="硬件架构"><a href="#硬件架构" class="headerlink" title="硬件架构"></a><strong>硬件架构</strong></h2><ul>
+<li><p><strong>CPU 与 GPU 结构</strong>：CPU 包含前端总线、内存、PCI 插槽等；GPU 包含流处理器、纹理单元、缓存等组件。</p>
+</li>
+<li><p>性能参数：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>内存带宽</th>
+<th>缓存延迟（时钟周期）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>~16 GB&#x2F;s</td>
+<td>L1 Cache：4；L2 Cache：11；L3 Cache：38；主内存：167</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>~20-100 GB&#x2F;s</td>
+<td>Ampere L2：100ms；RONA L2：20ns</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>优化建议：关注缓存效率，利用硬件并行计算，避免冯・诺依曼瓶颈。</p>
+</li>
+</ul>
+<h3 id="SIMT与SIMD"><a href="#SIMT与SIMD" class="headerlink" title="SIMT与SIMD"></a>SIMT与SIMD</h3><h4 id="SIMD-Single-Instruction-Multiple-Data"><a href="#SIMD-Single-Instruction-Multiple-Data" class="headerlink" title="SIMD (Single Instruction, Multiple Data)"></a>SIMD (Single Instruction, Multiple Data)</h4><ul>
+<li><strong>核心概念：</strong> 一条指令同时作用于<strong>多个数据元素</strong>。</li>
+<li><strong>工作原理：</strong><ul>
+<li>处理器有一个特殊的宽寄存器（例如，128位、256位、512位的 SSE&#x2F;AVX&#x2F;Neon 寄存器）。</li>
+<li>这条宽寄存器可以“打包”存放多个相同类型的数据（例如，一个256位寄存器可以存放8个32位浮点数）。</li>
+<li>当执行一条SIMD指令（如向量加法 <code>ADDPS</code>）时，这条指令会<strong>同时</strong>对这个宽寄存器中的所有数据元素执行相同的操作（例如，同时进行8个浮点数的加法）。</li>
+<li>结果是所有对应的数据元素同时完成计算，结果也打包在另一个宽寄存器中。</li>
+</ul>
+</li>
+<li><strong>硬件实现：</strong><ul>
+<li>在CPU上通常通过专门的<strong>向量处理单元</strong>实现。</li>
+<li>需要显式的指令集支持（如 x86 的 SSE, AVX, AVX-512；ARM 的 Neon, SVE）。</li>
+</ul>
+</li>
+<li><strong>编程模型：</strong><ul>
+<li><strong>显式：</strong> 程序员通常需要：<ul>
+<li>显式调用编译器内置函数或汇编指令。</li>
+<li>显式处理数据的打包和解包。</li>
+<li>显式处理数据对齐。</li>
+<li>显式处理分支（SIMD对分支处理不友好，通常需要避免或使用掩码操作）。</li>
+</ul>
+</li>
+<li><strong>数据并行：</strong> 焦点在于对数据集合进行相同的操作。</li>
+</ul>
+</li>
+<li><strong>优点：</strong><ul>
+<li>对于规则、数据并行的任务（如图像处理、科学计算、矩阵运算、音频处理）可以显著加速。</li>
+<li>充分利用了CPU的ALU资源。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li>编程相对复杂，可移植性较差（依赖特定指令集）。</li>
+<li>对不规则并行、分支密集的代码效果差。</li>
+<li>需要处理数据布局（如结构体数组 vs 数组结构体）以利于向量化。</li>
+</ul>
+</li>
+</ul>
+<h4 id="SIMT-Single-Instruction-Multiple-Threads"><a href="#SIMT-Single-Instruction-Multiple-Threads" class="headerlink" title="SIMT (Single Instruction, Multiple Threads)"></a>SIMT (Single Instruction, Multiple Threads)</h4><ul>
+<li><strong>核心概念：</strong> 一条指令同时被<strong>多个线程</strong>执行，但每个线程处理的是<strong>自己的数据</strong>。可以理解为<strong>用硬件管理的线程级并行来实现数据并行</strong>。</li>
+<li><strong>工作原理：</strong><ul>
+<li>大量线程（成百上千甚至更多）被组织成线程块和网格。</li>
+<li>硬件（GPU）将这些线程分组（例如NVIDIA GPU的 <strong>Warp</strong>，通常是32个线程一组）。</li>
+<li>一个Warp中的所有线程在同一个时钟周期内被<strong>同一个执行单元</strong>获取并执行<strong>相同的指令</strong>。</li>
+<li>关键是：<strong>每个线程都有自己的程序计数器、寄存器文件和私有的数据路径</strong>。虽然执行相同的指令，但它们操作的是各自不同的数据（例如，处理图像中不同的像素、矩阵中不同的元素）。</li>
+<li>当线程间出现<strong>分支发散</strong>时（例如，Warp中部分线程走 if 分支，部分走 else 分支），硬件会<strong>串行化</strong>执行所有分支路径（先执行所有走 if 的线程，屏蔽走 else 的；然后执行所有走 else 的线程，屏蔽走 if 的）。这会导致性能下降。</li>
+</ul>
+</li>
+<li><strong>硬件实现：</strong><ul>
+<li>GPU架构的核心设计思想。</li>
+<li>拥有大量相对简单的处理核心，以及复杂的线程调度器和内存层次结构。</li>
+</ul>
+</li>
+<li><strong>编程模型：</strong><ul>
+<li><strong>隐式：</strong> 程序员编写的是<strong>单线程</strong>代码（例如CUDA Kernel或OpenCL Kernel）。</li>
+<li>程序员定义大量的线程，并为每个线程分配一个唯一的ID，通过这个ID来决定该线程处理哪部分数据。</li>
+<li>硬件（运行时系统和GPU调度器）自动将这些线程映射到SIMT执行单元（如Warp）上并行执行。</li>
+<li>程序员关注的是<strong>任务并行</strong>或<strong>数据分解</strong>的逻辑，不需要显式处理向量指令或数据打包（硬件在Warp级别隐式实现了类似SIMD的效果）。</li>
+</ul>
+</li>
+<li><strong>优点：</strong><ul>
+<li>编程模型更接近传统的多线程编程，相对SIMD更简单直观（尤其在处理复杂数据访问模式时）。</li>
+<li>天然适合大规模并行问题（成千上万线程）。</li>
+<li>硬件自动管理线程调度、上下文切换，效率高。</li>
+<li>对某些类型的不规则并行（每个线程逻辑独立）有较好的容忍度（只要Warp内分支发散不严重）。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>分支发散</strong>是主要性能杀手，需要精心设计算法和数据结构来最小化。</li>
+<li>需要特殊的硬件（GPU）或编程环境（CUDA, OpenCL, SYCL）。</li>
+<li>线程间通信和同步需要显式处理（如共享内存、原子操作）。</li>
+<li>内存访问模式（合并访问 vs 分散访问）对性能影响巨大。</li>
+</ul>
+</li>
+</ul>
+<h4 id="关键区别总结"><a href="#关键区别总结" class="headerlink" title="关键区别总结"></a>关键区别总结</h4><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">SIMD</th>
+<th align="left">SIMT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>核心</strong></td>
+<td align="left"><strong>单指令流，多数据流</strong></td>
+<td align="left"><strong>单指令流，多线程</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>并行粒度</strong></td>
+<td align="left"><strong>数据元素</strong> (打包在向量寄存器中)</td>
+<td align="left"><strong>线程</strong> (每个线程有自己的上下文和私有数据)</td>
+</tr>
+<tr>
+<td align="left"><strong>硬件焦点</strong></td>
+<td align="left">CPU 向量处理单元 (VPU)</td>
+<td align="left">GPU 核心 (大量简单核心 + Warp 调度器)</td>
+</tr>
+<tr>
+<td align="left"><strong>编程模型</strong></td>
+<td align="left"><strong>显式</strong> (调用向量指令&#x2F;内置函数)</td>
+<td align="left"><strong>隐式</strong> (编写单线程kernel，硬件管理并行)</td>
+</tr>
+<tr>
+<td align="left"><strong>编程焦点</strong></td>
+<td align="left"><strong>数据并行</strong> (操作数据集合)</td>
+<td align="left"><strong>任务&#x2F;数据分解</strong> (定义每个线程做什么)</td>
+</tr>
+<tr>
+<td align="left"><strong>分支处理</strong></td>
+<td align="left">困难 (需掩码操作&#x2F;避免分支)</td>
+<td align="left">可能 (但有性能惩罚 - <strong>分支发散</strong>)</td>
+</tr>
+<tr>
+<td align="left"><strong>数据布局</strong></td>
+<td align="left">关键 (需利于向量化，如 AoS vs SoA)</td>
+<td align="left">关键 (需利于合并内存访问)</td>
+</tr>
+<tr>
+<td align="left"><strong>线程管理</strong></td>
+<td align="left">无 (操作数据)</td>
+<td align="left">硬件自动管理 (调度、上下文切换)</td>
+</tr>
+<tr>
+<td align="left"><strong>主要优势</strong></td>
+<td align="left">规则数据并行任务的高效执行 (CPU)</td>
+<td align="left">大规模并行任务的高吞吐量 (GPU)</td>
+</tr>
+<tr>
+<td align="left"><strong>主要劣势</strong></td>
+<td align="left">编程复杂、对不规则并行&#x2F;分支差</td>
+<td align="left">分支发散、内存访问模式对性能影响大</td>
+</tr>
+<tr>
+<td align="left"><strong>典型代表</strong></td>
+<td align="left">x86 SSE&#x2F;AVX, ARM Neon&#x2F;SVE</td>
+<td align="left">NVIDIA CUDA (Warp), AMD GCN&#x2F;RDNA (Wavefront)</td>
+</tr>
+</tbody></table>
+<h4 id="重要关系与融合"><a href="#重要关系与融合" class="headerlink" title="重要关系与融合"></a>重要关系与融合</h4><ol>
+<li><strong>SIMT 内部利用了类似 SIMD 的机制：</strong> 一个 Warp&#x2F;Wavefront 在硬件执行单元上实际是以一种“锁步”的方式执行同一条指令。从执行单元的角度看，它在处理一个“宽操作数”（32个线程的数据），这非常类似于SIMD。所以常说 <strong>SIMT 在硬件底层使用了 SIMD 执行</strong>。SIMT 是更高层次的编程抽象，硬件用 SIMD 执行来实现它。</li>
+<li><strong>现代 CPU 和 GPU 的融合：</strong><ul>
+<li><strong>CPU：</strong> 除了强大的标量核心和SIMD单元，现代CPU也支持硬件多线程（如Intel Hyper-Threading），允许多个线程共享一个核心的资源（类似轻量级线程级并行）。</li>
+<li><strong>GPU：</strong> 除了SIMT核心，现代GPU也加入了强大的标量单元、更复杂的缓存层次，甚至支持Tensor Core（一种特定类型的SIMD&#x2F;SIMT混合单元用于矩阵乘加）。</li>
+<li><strong>统一内存架构：</strong> 如 Apple Silicon (M1, M2, M3 系列)，其GPU核心采用SIMT架构，但与CPU共享统一内存，CPU部分也有强大的SIMD单元，两者可以更紧密地协作。</li>
+</ul>
+</li>
+</ol>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li><strong>SIMD</strong> 是让<strong>一条指令操作多个数据元素</strong>，主要在<strong>CPU</strong>上用于加速规则的数据并行计算，编程相对底层。</li>
+<li><strong>SIMT</strong> 是让<strong>一条指令驱动多个线程执行</strong>（每个线程操作自己的数据），主要在<strong>GPU</strong>上用于处理大规模并行问题，提供了更高级、更易于编写大规模并行代码的编程模型（如CUDA）。</li>
+<li><strong>SIMT 在硬件上通常利用类似 SIMD 的执行机制来实现 Warp&#x2F;Wavefront 的并行执行。</strong></li>
+<li>两者都是提升计算吞吐量的关键技术，选择哪种取决于问题规模、并行模式（规则 vs 不规则）、硬件平台以及开发效率的考量。现代处理器架构正在融合两者的优势。</li>
+</ul>
+<h2 id="可渲染对象"><a href="#可渲染对象" class="headerlink" title="可渲染对象"></a><strong>可渲染对象</strong></h2><ul>
+<li><p><strong>渲染管线</strong>：包括前向渲染、延迟渲染、前向 + 渲染等，还有混合效果的实际管线、环形缓冲区与垂直同步、基于瓦片的渲染等。</p>
+</li>
+<li><p><strong>数据</strong>：包含数百万顶点和三角形，顶点数据有位置、颜色、法向量等，三角形由 3 个顶点组成。</p>
+</li>
+<li><p><strong>Mesh (网格)：</strong></p>
+<ul>
+<li><strong>是什么？</strong> 一个物体在 3D 空间中的几何形状定义。</li>
+<li><strong>组成：</strong><ul>
+<li><strong>顶点：</strong> 构成物体表面的点。每个顶点包含其在 3D 空间中的位置坐标 (x, y, z)。</li>
+<li><strong>边：</strong> 连接顶点的线。</li>
+<li><strong>面：</strong> 由边围成的区域（通常是三角形或四边形）。三角形是最常用、最基础的面，因为所有图形硬件都能高效处理它。</li>
+<li><strong>(可选) 法线：</strong> 附着在顶点或面上的向量，定义了该点或面“朝向”的方向，对光照计算至关重要（决定光如何反射）。</li>
+<li><strong>(可选) UV 坐标：</strong> 附着在顶点上的 2D 坐标 (u, v)，就像给几何体表面贴邮票的“邮票位置”。它定义了纹理贴图如何“包裹”或“投影”到 Mesh 表面上。</li>
+</ul>
+</li>
+<li><strong>作用：</strong> 定义了物体的 <strong>形状、大小和结构轮廓</strong>。它回答的是“这个物体占据什么空间？”。</li>
+</ul>
+</li>
+<li><p><strong>Texture (纹理)：</strong></p>
+<ul>
+<li><strong>是什么？</strong> 本质上是一张 <strong>2D 图片</strong>（位图）。常见的格式有 JPG, PNG, TGA, TIF 等。</li>
+<li><strong>作用：</strong> 提供物体表面的 <strong>视觉细节</strong>。</li>
+<li><strong>常见类型：</strong><ul>
+<li><strong>漫反射贴图 &#x2F; 反照率贴图：</strong> 定义物体表面的基础颜色和图案（如木纹、砖墙、皮肤颜色）。这是最基础、最常见的纹理。</li>
+<li><strong>法线贴图：</strong> 通过改变表面法线方向（RGB 值对应 XYZ 偏移）来模拟微小凹凸细节（如砖缝、划痕、褶皱），<strong>不改变实际几何形状</strong>（Mesh 仍然是平的），但视觉效果有深度感。</li>
+<li><strong>高光贴图 &#x2F; 金属度贴图 &#x2F; 粗糙度贴图：</strong> 定义物体表面不同区域的光泽度、金属感和粗糙度。这些是现代 PBR（基于物理的渲染）材质的关键组成部分。</li>
+<li><strong>环境光遮蔽贴图：</strong> 模拟物体自身几何结构造成的阴影和遮蔽效果（如缝隙、角落变暗），增加场景深度感。</li>
+<li><strong>自发光贴图：</strong> 定义物体表面哪些区域会自己发光（如屏幕、灯管）。</li>
+</ul>
+</li>
+<li><strong>作用：</strong> 回答了“这个物体表面看起来是什么样？有什么细节？”。</li>
+<li><strong>与 Mesh 的关联：</strong> 通过 Mesh 顶点上的 <strong>UV 坐标</strong> 将 2D 纹理“贴”到 3D 网格表面上。想象把一张世界地图（纹理）贴到地球仪（Mesh）上，UV 坐标就是地图上的经纬度网格。</li>
+</ul>
+</li>
+<li><p><strong>材质（Material）</strong>：决定物体外观及与光的交互，如光滑金属、粗糙石头等，涉及 PBR（基于物理的渲染）等模型。</p>
+<ul>
+<li><strong>是什么？</strong> 定义物体表面 <strong>如何与光线互动</strong> 的一组<strong>属性、算法和资源的集合</strong>。它是最终视觉表现的“配方”。</li>
+<li><strong>组成：</strong><ul>
+<li><strong>着色器：</strong> <strong>核心程序代码</strong>。它是一组数学指令和算法，运行在 GPU 上，决定了光线如何根据 Material 的属性（见下）和输入的纹理进行计算，最终生成每个像素的颜色。常见的着色器类型有 PBR、Blinn-Phong、Unlit 等。</li>
+<li><strong>属性参数：</strong> 着色器使用的可调节数值。例如：<ul>
+<li>基础颜色（可以是纯色，也可以链接到漫反射贴图）</li>
+<li>金属度值</li>
+<li>粗糙度&#x2F;光滑度值</li>
+<li>透明度</li>
+<li>法线强度</li>
+<li>自发光强度&#x2F;颜色</li>
+</ul>
+</li>
+<li><strong>纹理引用：</strong> 材质会 <strong>引用一个或多个纹理</strong> 来提供具体的视觉数据。例如：<ul>
+<li>将“漫反射贴图”纹理连接到“基础颜色”属性。</li>
+<li>将“法线贴图”纹理连接到“法线”输入。</li>
+<li>将“粗糙度贴图”纹理连接到“粗糙度”属性。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>作用：</strong> 回答了“这个物体表面是光滑的还是粗糙的？是金属还是塑料？是透明的吗？它对光有什么反应？”。</li>
+<li><strong>与 Mesh 和 Texture 的关系：</strong><ul>
+<li>材质 <strong>应用于</strong> Mesh。一个 Mesh 只能应用一种材质（在绝大多数渲染流程中），但一个材质可以被应用到多个 Mesh 上。</li>
+<li>材质 <strong>使用</strong> 纹理来提供其属性所需的具体细节数据。材质定义了 <em>如何</em> 使用这些纹理（通过着色器）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>着色器（Shader）</strong>：处理渲染计算的程序，如顶点着色器、片段着色器等，包含常量、参数及纹理采样等操作。</p>
+</li>
+</ul>
+<p><img src="/2025/07/25/hello-world/ge-20250724120000185.png"></p>
+<h2 id="可见性剔除"><a href="#可见性剔除" class="headerlink" title="可见性剔除"></a><strong>可见性剔除</strong></h2><ul>
+<li><p><strong>目的</strong>：对于每个视图，剔除无需渲染的物体，提升性能。</p>
+</li>
+<li><p><strong>方法</strong>：</p>
+<ul>
+<li><p><strong>利用边界体</strong>（如球体、AABB、OBB 等）进行视锥体剔除，边界体需具备交集测试成本低、贴合度高等特点。</p>
+</li>
+<li><p><strong>层次化视锥体剔除</strong>，如 BVH（边界体层次结构）等。</p>
+<ul>
+<li><p><strong>BVH Culling</strong></p>
+<p><img src="/2025/07/25/hello-world/ge-20250724120115570.png"></p>
+</li>
+</ul>
+</li>
+<li><p><strong>PVS（潜在可见集）</strong>，通过门户等确定潜在可见的叶节点。</p>
+</li>
+<li><p><strong>GPU 剔除</strong>，如 PreZ 技术等。</p>
+<p><img src="/2025/07/25/hello-world/ge-20250724120212711.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>在GPU Culling（GPU剔除）技术中，<strong>“PreZ”</strong>（或写作 <strong>Pre-Z</strong>、<strong>Z-Prepass</strong>）是一种关键的渲染优化策略，全称为 <strong>Pre-Depth Pass</strong>（预深度通道）。其核心目标是<strong>通过提前生成深度图，减少后续渲染中的无效片元计算（Overdraw）</strong>，从而显著提升渲染性能。</p>
+<hr>
+<h3 id="PreZ-的工作原理"><a href="#PreZ-的工作原理" class="headerlink" title="PreZ 的工作原理"></a><strong>PreZ 的工作原理</strong></h3><ol>
+<li><p><strong>第一次渲染通道（Depth-Only Pass）</strong>:</p>
+<ul>
+<li>仅渲染场景中所有对象的<strong>深度信息</strong>（不计算颜色、光照等）。</li>
+<li>顶点着色器（Vertex Shader）处理顶点位置，但片元着色器（Fragment Shader）被简化或跳过。</li>
+<li>结果：生成一张<strong>深度缓冲区（Depth Buffer）</strong>，记录每个像素的最近深度值。</li>
+</ul>
+</li>
+<li><p><strong>第二次渲染通道（Main Rendering Pass）</strong>:</p>
+<ul>
+<li>正常渲染物体（包括颜色、光照、纹理等）。</li>
+<li>在片元着色器执行前，GPU 将当前片元的深度值与深度缓冲区中的值对比：<ul>
+<li>若当前片元深度 &gt; 深度缓冲区的值（即被遮挡），则直接丢弃该片元（<strong>Early-Z Test</strong>）。</li>
+<li>只有未被遮挡的片元才会进入耗时的片元着色器计算。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="为何-PreZ-能优化性能？"><a href="#为何-PreZ-能优化性能？" class="headerlink" title="为何 PreZ 能优化性能？"></a><strong>为何 PreZ 能优化性能？</strong></h3><ul>
+<li><strong>减少 Overdraw（过度绘制）</strong>：<br>复杂场景中多个物体可能重叠（如墙壁后的家具），PreZ 通过深度测试提前丢弃被遮挡的片元，避免无效的片元着色器计算。</li>
+<li><strong>利用硬件优化</strong>：<br>GPU 的 Early-Z 单元在片元着色前执行深度测试，大幅减少计算量。</li>
+<li><strong>带宽节约</strong>：<br>避免被遮挡片元写入颜色缓冲区，减少显存带宽占用。</li>
+</ul>
+<hr>
+<h3 id="PreZ-的典型应用场景"><a href="#PreZ-的典型应用场景" class="headerlink" title="PreZ 的典型应用场景"></a><strong>PreZ 的典型应用场景</strong></h3><table>
+<thead>
+<tr>
+<th><strong>场景类型</strong></th>
+<th><strong>收益原因</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>室内复杂场景</td>
+<td>大量物体相互遮挡（如家具、墙壁）</td>
+</tr>
+<tr>
+<td>植被&#x2F;森林渲染</td>
+<td>树叶、树干多层重叠</td>
+</tr>
+<tr>
+<td>角色密集的场景</td>
+<td>多个角色在狭窄空间重叠</td>
+</tr>
+<tr>
+<td>延迟渲染（Deferred）</td>
+<td>需提前生成深度缓冲用于光照计算</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="PreZ-的局限性"><a href="#PreZ-的局限性" class="headerlink" title="PreZ 的局限性"></a><strong>PreZ 的局限性</strong></h3><ol>
+<li><strong>额外Draw Call开销</strong>：<br>需额外渲染一次整个场景（仅深度），可能增加CPU提交指令的负担。</li>
+<li><strong>动态物体处理复杂</strong>：<br>若物体在两次Pass间移动，需同步更新深度缓冲区（如使用动态批处理）。</li>
+<li><strong>透明物体不适用</strong>：<br>透明物体需按从后向前顺序渲染，PreZ无法直接优化。</li>
+</ol>
+<hr>
+<h3 id="与其他剔除技术的协作"><a href="#与其他剔除技术的协作" class="headerlink" title="与其他剔除技术的协作"></a><strong>与其他剔除技术的协作</strong></h3><ul>
+<li><strong>层级深度缓冲（Hierarchical Z-Buffer, HZB）</strong>：<br>基于PreZ生成的深度图构建层级结构，加速遮挡查询（如UE5的Nanite）。</li>
+<li><strong>GPU Driven Culling</strong>：<br>在Compute Shader中利用PreZ深度图进行物体级&#x2F;簇级剔除。</li>
+<li><strong>Occlusion Culling（遮挡剔除）</strong>：<br>CPU&#x2F;GPU协作，在PreZ前提前剔除完全被遮挡的物体。</li>
+</ul>
+<hr>
+<h3 id="现代引擎中的实现"><a href="#现代引擎中的实现" class="headerlink" title="现代引擎中的实现"></a><strong>现代引擎中的实现</strong></h3><ul>
+<li><strong>Unity</strong>：<br>通过<code>Camera.SetupDepthTexture()</code>启用深度图，或在URP&#x2F;HDRP中配置<code>Depth Prepass</code>。</li>
+<li><strong>Unreal Engine</strong>：<br>默认开启Z-Prepass（<code>r.EarlyZPass</code>控制），与HZB紧密结合优化遮挡。</li>
+<li><strong>自定义引擎</strong>：<br>手动渲染深度通道 → 绑定深度纹理到主渲染通道 → 启用深度测试。</li>
+</ul>
+<hr>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a><strong>总结</strong></h3><p><strong>PreZ（Z-Prepass）是GPU Culling的核心基石</strong>，通过<strong>提前深度渲染+Early-Z测试</strong>的机制，从像素层面减少无效计算。尽管有额外Draw Call的成本，但在遮挡复杂的场景中性能提升显著（尤其搭配现代GPU架构）。开发者需结合场景特性权衡其使用，并与其他剔除技术（如HZB、实例化）协同优化。</p>
+<hr>
+<h2 id="纹理压缩"><a href="#纹理压缩" class="headerlink" title="纹理压缩"></a><strong>纹理压缩</strong></h2><ul>
+<li>游戏纹理压缩注重解码速度、随机访问、压缩率和视觉质量等。</li>
+<li>常见块压缩格式：PC 端用 BC7（现代）或 DXTC（旧），移动端用 ASTC（现代）或 ETC&#x2F;PVRTC（旧）。</li>
+</ul>
+<h2 id="模型制作工具"><a href="#模型制作工具" class="headerlink" title="模型制作工具"></a><strong>模型制作工具</strong></h2><ul>
+<li>包括多边形建模（如 MAX、MAYA、BLENDER）、雕刻、扫描、程序化建模等。</li>
+<li>不同方法各有优劣，如多边形建模灵活有创意但工作量大，扫描能获取大量数据但难实现逼真等。</li>
+</ul>
+<h2 id="集群化网格管线（Cluster-Based-Mesh-Pipeline）"><a href="#集群化网格管线（Cluster-Based-Mesh-Pipeline）" class="headerlink" title="集群化网格管线（Cluster-Based Mesh Pipeline）"></a><strong>集群化网格管线</strong>（Cluster-Based Mesh Pipeline）</h2><ul>
+<li>属于 GPU 驱动的渲染管线，支持单个绘制调用处理任意数量的网格，通过集群进行剔除（如视锥体、遮挡剔除等）。</li>
+<li>可实现索引缓冲区压缩、多绘制等操作。</li>
+</ul>
+<p><strong>Cluster-Based Mesh Pipeline（基于集群的网格管线）</strong> 是一种现代图形渲染技术，核心思想是将传统网格（Mesh）细分为更小的“集群”（Cluster），在GPU上实现<strong>细粒度剔除（Fine-Grained Culling）</strong> 和 <strong>高效渲染</strong>。它彻底改变了传统以“整个Mesh”为单位的渲染流程，尤其适用于处理超大规模、高精度的几何场景（如影视级模型、开放世界游戏）。以下是其核心原理与技术解析：</p>
+<hr>
+<h3 id="一、为什么需要Cluster-Based-Pipeline？"><a href="#一、为什么需要Cluster-Based-Pipeline？" class="headerlink" title="一、为什么需要Cluster-Based Pipeline？"></a><strong>一、为什么需要Cluster-Based Pipeline？</strong></h3><p>传统渲染管线的瓶颈：</p>
+<ol>
+<li><strong>剔除粒度粗糙</strong>：  <ul>
+<li>传统遮挡剔除（Occlusion Culling）以“物体”（Object）或“子网格”（Submesh）为单位。  </li>
+<li>若一个物体部分可见（如巨型岩石仅露一角），仍需渲染整个物体 → <strong>过度绘制（Overdraw）严重</strong>。</li>
+</ul>
+</li>
+<li><strong>高精度模型处理低效</strong>：  <ul>
+<li>影视级模型单网格可达数百万三角形，传统管线无法高效剔除其内部不可见部分。</li>
+</ul>
+</li>
+<li><strong>GPU负载不均</strong>：  <ul>
+<li>大网格导致GPU线程负载不均衡，部分线程处理复杂三角面，部分闲置 → <strong>并行效率低下</strong>。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="二、Cluster的核心定义"><a href="#二、Cluster的核心定义" class="headerlink" title="二、Cluster的核心定义"></a><strong>二、Cluster的核心定义</strong></h3><ul>
+<li><strong>什么是Cluster？</strong>  <ul>
+<li>一个Cluster是 <strong>网格中的一组连续三角形</strong>（通常包含 <strong>32-128个三角形</strong>）。  </li>
+<li>每个Cluster附带关键元数据：  <ul>
+<li><strong>包围盒（Bounding Box）</strong>：用于快速空间测试。  </li>
+<li><strong>包围球（Bounding Sphere）</strong>：简化距离计算。  </li>
+<li><strong>法线锥（Normal Cone）</strong>：检测背面集群（Backface Culling）。  </li>
+<li><strong>LOD标识符</strong>：支持集群级动态细节层次。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="三、管线核心流程"><a href="#三、管线核心流程" class="headerlink" title="三、管线核心流程"></a><strong>三、管线核心流程</strong></h3><h4 id="阶段1：集群化预处理（离线-实时）"><a href="#阶段1：集群化预处理（离线-实时）" class="headerlink" title="阶段1：集群化预处理（离线&#x2F;实时）"></a><strong>阶段1：集群化预处理（离线&#x2F;实时）</strong></h4><ul>
+<li><strong>输入</strong>：原始高精度网格（数百万三角形）。  </li>
+<li><strong>处理</strong>：  <ol>
+<li><strong>网格分割</strong>：  <ul>
+<li>按空间连续性或材质分组三角形，生成集群（Cluster）。</li>
+</ul>
+</li>
+<li><strong>计算元数据</strong>：  <ul>
+<li>为每个Cluster生成包围盒、法线锥等。</li>
+</ul>
+</li>
+<li><strong>构建加速结构</strong>：  <ul>
+<li>将集群组织为 <strong>BVH（层次包围盒）</strong> 或 <strong>Cluster Tree</strong>，优化GPU查询。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>输出</strong>：<strong>集群化网格（Clustered Mesh） + 元数据缓冲区</strong>。</li>
+</ul>
+<blockquote>
+<p>✅ <strong>关键优势</strong>：预处理后，渲染不再依赖原始三角面数据，而是操作轻量级集群！</p>
+</blockquote>
+<h4 id="阶段2：GPU-Driven剔除（每帧执行）"><a href="#阶段2：GPU-Driven剔除（每帧执行）" class="headerlink" title="阶段2：GPU-Driven剔除（每帧执行）"></a><strong>阶段2：GPU-Driven剔除（每帧执行）</strong></h4><p>在Compute Shader中并行处理所有集群：  </p>
+<ol>
+<li><strong>视锥剔除（Frustum Culling）</strong>：  <ul>
+<li>检测集群包围盒是否在摄像机视锥内。</li>
+</ul>
+</li>
+<li><strong>背面剔除（Backface Culling）</strong>：  <ul>
+<li>用法线锥判断集群是否背对摄像机。</li>
+</ul>
+</li>
+<li><strong>遮挡剔除（Occlusion Culling）</strong>：  <ul>
+<li>对比集群包围盒与深度缓冲（Hi-Z或PreZ生成），完全遮挡则剔除。</li>
+</ul>
+</li>
+<li><strong>LOD选择</strong>：  <ul>
+<li>根据集群到摄像机的距离，动态选择不同细节层级的集群。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 伪代码：GPU剔除核心逻辑（Compute Shader）</span></span><br><span class="line">foreach (cluster in allClusters) &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !IsClusterInFrustum(cluster) ) cull;  <span class="comment">// 视锥剔除</span></span><br><span class="line">    <span class="keyword">if</span> ( IsClusterBackfacing(cluster) ) cull;  <span class="comment">// 背面剔除</span></span><br><span class="line">    <span class="keyword">if</span> ( IsClusterOccluded(cluster, HiZBuffer) ) cull; <span class="comment">// 遮挡剔除</span></span><br><span class="line">    cluster.LOD = SelectLODBasedOnDistance(cluster); <span class="comment">// LOD选择</span></span><br><span class="line">    <span class="keyword">if</span> (!culled) AppendToDrawList(cluster); <span class="comment">// 存活集群加入绘制列表</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="阶段3：高效渲染"><a href="#阶段3：高效渲染" class="headerlink" title="阶段3：高效渲染"></a><strong>阶段3：高效渲染</strong></h4><ul>
+<li><strong>输入</strong>：剔除后的集群绘制列表（GPU缓冲区）。  </li>
+<li><strong>渲染流程</strong>：  <ol>
+<li><strong>间接绘制（Indirect Drawing）</strong>：  <ul>
+<li>使用 <code>VkCmdDrawIndexedIndirect</code> 或 <code>GL_DRAW_INDIRECT</code>，根据绘制列表批量提交集群。</li>
+</ul>
+</li>
+<li><strong>顶点重排序（Vertex Reordering）</strong>：  <ul>
+<li>集群内三角形顶点连续存储 → <strong>提升GPU缓存局部性</strong>，减少顶点着色器重复计算。</li>
+</ul>
+</li>
+<li><strong>材质批处理</strong>：  <ul>
+<li>合并相同材质的集群，减少Draw Call和状态切换。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="四、技术优势"><a href="#四、技术优势" class="headerlink" title="四、技术优势"></a><strong>四、技术优势</strong></h3><table>
+<thead>
+<tr>
+<th><strong>技术指标</strong></th>
+<th><strong>传统管线</strong></th>
+<th><strong>Cluster-Based管线</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>剔除粒度</td>
+<td>物体&#x2F;子网格级</td>
+<td><strong>三角形集群级</strong>（细粒度）</td>
+</tr>
+<tr>
+<td>Overdraw控制</td>
+<td>弱（大物体部分可见时低效）</td>
+<td><strong>强</strong>（仅渲染可见集群）</td>
+</tr>
+<tr>
+<td>GPU并行效率</td>
+<td>负载不均衡</td>
+<td><strong>高度均匀</strong>（小集群任务）</td>
+</tr>
+<tr>
+<td>超大规模模型支持</td>
+<td>困难（内存&#x2F;计算瓶颈）</td>
+<td><strong>原生支持</strong>（集群化结构）</td>
+</tr>
+<tr>
+<td>动态LOD切换</td>
+<td>整网格切换（突兀）</td>
+<td><strong>平滑过渡</strong>（集群级LOD）</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="五、行业应用案例"><a href="#五、行业应用案例" class="headerlink" title="五、行业应用案例"></a><strong>五、行业应用案例</strong></h3><ol>
+<li><strong>Unreal Engine 5 - Nanite</strong>：  <ul>
+<li>核心即Cluster-Based渲染，支持影视级模型实时渲染（数亿三角形）。  </li>
+<li>结合虚拟纹理（Virtual Texture）和软件光栅化（Software Rasterization）。</li>
+</ul>
+</li>
+<li><strong>Frostbite Engine（战地系列）</strong>：  <ul>
+<li>使用集群管线处理开放世界植被和建筑。</li>
+</ul>
+</li>
+<li><strong>Unity DOTS</strong>：  <ul>
+<li>基于ECS架构实现集群化剔除与渲染。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="六、挑战与解决方案"><a href="#六、挑战与解决方案" class="headerlink" title="六、挑战与解决方案"></a><strong>六、挑战与解决方案</strong></h3><table>
+<thead>
+<tr>
+<th><strong>挑战</strong></th>
+<th><strong>解决方案</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>集群构建耗时</td>
+<td>离线预处理 + 异步计算</td>
+</tr>
+<tr>
+<td>动态物体更新</td>
+<td>增量式集群更新 + GPU加速变形</td>
+</tr>
+<tr>
+<td>集群间缝隙（Crack）</td>
+<td>集群边界顶点共享 + 曲面细分修补</td>
+</tr>
+<tr>
+<td>内存占用增长</td>
+<td>压缩元数据 + 流式加载</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a><strong>七、总结</strong></h3><p><strong>Cluster-Based Mesh Pipeline 是图形学应对几何复杂度爆炸的核心革命：</strong></p>
+<ul>
+<li><strong>核心理念</strong>：将网格拆分为小集群，实现亚网格级剔除。  </li>
+<li><strong>关键流程</strong>：集群预处理 → GPU驱动细粒度剔除 → 间接绘制。  </li>
+<li><strong>核心价值</strong>：  <ul>
+<li>彻底解决传统管线在<strong>超大规模几何体</strong>下的性能瓶颈。  </li>
+<li>释放GPU并行潜力，最大化利用现代计算着色器能力。</li>
+</ul>
+</li>
+<li><strong>未来方向</strong>：  <ul>
+<li>与<strong>光线追踪</strong>结合（集群作为加速结构单元）。  </li>
+<li><strong>AI驱动的自适应集群分割</strong>（优化剔除效率）。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>🔥 此技术已成为AAA游戏引擎（如UE5 Nanite）和影视实时渲染的基石，标志着图形学从“以物体为中心”到“以数据为中心”的范式转变。</p>
+</blockquote>
+<h1 id="渲染中光和材质"><a href="#渲染中光和材质" class="headerlink" title="渲染中光和材质"></a>渲染中光和材质</h1><h3 id="一、渲染基础"><a href="#一、渲染基础" class="headerlink" title="一、渲染基础"></a><strong>一、渲染基础</strong></h3><ul>
+<li><p><strong>核心：渲染方程</strong>：由 James Kajiya 在 1986 年提出，描述辐射度平衡，公式为 </p>
+<p><img src="/games104/image-20250727112732026.png" alt="image-20250727112732026"></p>
+<p>其中包含<strong>发射辐射度</strong>（如光源）和<strong>反射辐射度</strong>（材质与入射光作用）。</p>
+</li>
+<li><p><strong>光照参与元素</strong>：光子的发射、反弹、吸收及感知是渲染的基础，物质对光子的反应是关键。</p>
+</li>
+<li><p><strong>辐射度（Radiance）与辐照度（Irradiance）</strong>：描述光能量的关键物理量，是渲染计算的基础。</p>
+</li>
+</ul>
+<h3 id="二、渲染的核心挑战"><a href="#二、渲染的核心挑战" class="headerlink" title="二、渲染的核心挑战"></a><strong>二、渲染的核心挑战</strong></h3><ol>
+<li><strong>可见性判断</strong>：确定点是否被光源照射（如阴影计算），传统方法为光线投射（Ray Casting Toward Light Source）。</li>
+<li><strong>积分计算复杂性</strong>：在半球上对光照和散射函数进行积分，直接计算成本极高。</li>
+<li><strong>递归性</strong>：入射辐射度的计算依赖另一个积分，导致渲染方程具有递归性。</li>
+</ol>
+<h3 id="三、简单渲染解决方案"><a href="#三、简单渲染解决方案" class="headerlink" title="三、简单渲染解决方案"></a><strong>三、简单渲染解决方案</strong></h3><ul>
+<li><p><strong>简单光源与环境光</strong>：以方向光为主光源，点光源和聚光灯为特殊情况，用环境光近似复杂半球辐照度（如 OpenGL 中的<code>glLightfv</code>设置）。</p>
+</li>
+<li><p><strong>Blinn-Phong 材质模型</strong>：</p>
+<p><img src="/2025/07/25/hello-world/ge-20250727112826351.png" alt="image-20250727112826351"></p>
+<p>但存在<strong>不守恒能量</strong>、<strong>难以模拟复杂材质</strong>、<strong>光线追踪中不稳定</strong>等问题。</p>
+</li>
+<li><p><strong>阴影图（Shadow Map）</strong>：分两步渲染（Pass 1 渲染深度到阴影图，Pass 2 比较深度判断阴影），但存在深度精度和分辨率限制。</p>
+</li>
+</ul>
+<h3 id="四、全局光照（GI）技术"><a href="#四、全局光照（GI）技术" class="headerlink" title="四、全局光照（GI）技术"></a><strong>四、全局光照（GI）技术</strong></h3><ul>
+<li><p><strong>预计算 GI</strong>：通过离线计算光照农场（lightmap farm）生成辐照度探针，存储到光照图（lightmap）或压缩为球面谐波（SH）系数。</p>
+</li>
+<li><p><strong>光照图（Lightmap）</strong>：将场景参数化为 2D 图集，存储预计算的 GI 细节，优点是运行高效，缺点是预计算耗时、仅支持静态场景。</p>
+</li>
+<li><p><strong>光照探针（Light Probe）</strong>：在游戏空间中生成探针点（如基于地形、体素），支持静态和动态物体，但无法处理 GI 精细细节（如重叠结构的软阴影）。</p>
+</li>
+<li><p><strong>球面谐波（SH）编码</strong>：用多项式近似球面积分，压缩辐照度探针，公式为 </p>
+<p><img src="/2025/07/25/hello-world/ge-20250727112942059.png" alt="image-20250727112942059"></p>
+<p>可高效重构光照。</p>
+</li>
+</ul>
+<h3 id="五、基于物理的渲染（PBR）"><a href="#五、基于物理的渲染（PBR）" class="headerlink" title="五、基于物理的渲染（PBR）"></a><strong>五、基于物理的渲染（PBR）</strong></h3><ul>
+<li><p><strong>Microfacet 理论</strong>：材质表面由微表面组成，其法线分布决定反射特性（集中→光滑，分散→漫反射）。</p>
+</li>
+<li><p>BRDF 模型</p>
+<p>：Cook-Torrance 模型为核心，公式为</p>
+<p>​                                             <img src="/2025/07/25/hello-world/ge-20250727113050217.png" alt="image-20250727113050217"></p>
+<p>其中：</p>
+<ul>
+<li><em>D</em>（法线分布函数）：如 GGX 模型</li>
+</ul>
+<p><img src="/2025/07/25/hello-world/ge-20250727113240807.png" alt="image-20250727113240807"></p>
+<ul>
+<li><em>F</em>（菲涅尔项）：Schlick 近似</li>
+</ul>
+<p><img src="/2025/07/25/hello-world/ge-20250727113259324.png" alt="image-20250727113259324"></p>
+<ul>
+<li><em>G</em>（几何衰减项）：Smith 模型</li>
+</ul>
+<p><img src="/2025/07/25/hello-world/ge-20250727113330305.png" alt="image-20250727113330305"></p>
+</li>
+<li><p><strong>Disney Principled BRDF</strong>：参数直观（如金属度、粗糙度、次表面散射等），参数范围 0-1，支持组合使用。</p>
+</li>
+<li><p>两种 PBR 工作流：</p>
+<table>
+<thead>
+<tr>
+<th>工作流</th>
+<th>核心参数</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Specular Glossiness</td>
+<td>高光色、漫反射色、光泽度</td>
+<td>边缘 artifacts 少，可控制电介质 F0，但纹理内存占用高</td>
+</tr>
+<tr>
+<td>Metallic Roughness</td>
+<td>基础色、金属度、粗糙度</td>
+<td>纹理内存占用低，易制作，但电介质 F0 固定（0.08）</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h3 id="六、基于图像的光照（IBL）"><a href="#六、基于图像的光照（IBL）" class="headerlink" title="六、基于图像的光照（IBL）"></a><strong>六、基于图像的光照（IBL）</strong></h3><ul>
+<li><strong>核心思想</strong>：用环境贴图表示全方向光照，通过积分计算表面反射，公式拆分为漫反射（$L_d$）和镜面反射（$L_s$）两部分。</li>
+<li><strong>漫反射辐照度图</strong>：预计算环境贴图的漫反射积分，快速获取漫反射光照。</li>
+<li><strong>镜面近似</strong>：通过预过滤环境贴图和 LUT（查找表）近似镜面积分，公式简化为 $L_s&#x3D;PreFiltered(R,α)⋅(F_0⋅LUT.r+LUT.g)$。</li>
+</ul>
+<h3 id="七、阴影技术进阶"><a href="#七、阴影技术进阶" class="headerlink" title="七、阴影技术进阶"></a><strong>七、阴影技术进阶</strong></h3><ul>
+<li><strong>级联阴影（Cascade Shadow）</strong>：将视锥体分割为子视锥体，每个子视锥体对应一张阴影图，解决大场景透视锯齿，但无法生成高质量区域阴影。</li>
+<li>滤波技术：<ul>
+<li><strong>PCF</strong>（Percentage Closer Filter）：采样阴影图周围像素并平均，平滑阴影边缘。</li>
+<li><strong>PCSS</strong>（Percentage Closer Soft Shadow）：计算半影大小生成软阴影，存在采样不足问题。</li>
+<li><strong>VSSM</strong>（Variance Soft Shadow Map）：基于切比雪夫不等式，用深度均值和方差近似阴影比例，实时生成软阴影（如 VSSM 达 148 fps，PCSS 仅 10 fps）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="八、AAA-渲染方案总结"><a href="#八、AAA-渲染方案总结" class="headerlink" title="八、AAA 渲染方案总结"></a><strong>八、AAA 渲染方案总结</strong></h3><ul>
+<li>主流组合：<strong>光照图 + 光照探针</strong>、<strong>PBR+IBL</strong>、<strong>级联阴影 + VSSM</strong>。</li>
+</ul>
+<h3 id="九、实时渲染进展"><a href="#九、实时渲染进展" class="headerlink" title="九、实时渲染进展"></a><strong>九、实时渲染进展</strong></h3><ul>
+<li><strong>GPU 发展</strong>：支持计算着色器、网格着色器、光线追踪着色器，架构并行化（如 Warp&#x2F;Wave），API 开放（DirectX 12、Vulkan）。</li>
+<li><strong>实时光线追踪</strong>：通过光线生成、相交测试、closest-hit shader 实现，支持复杂光照效果（如反射、折射）。</li>
+<li><strong>复杂材质模型</strong>：如 BSSRDF（次表面散射）、基于发丝的 BSDF（头发渲染）。</li>
+</ul>
+<h3 id="十、着色器管理"><a href="#十、着色器管理" class="headerlink" title="十、着色器管理"></a><strong>十、着色器管理</strong></h3><ul>
+<li><strong>Uber Shader 与变体</strong>：通过宏定义编译多个变体，共享代码和状态，支持所有光照、材质类型（如《命运》每帧提交～3500-9000 个技术）。</li>
+<li><strong>跨编译器</strong>：工具链（Glslang、MS-DXC 等）支持 HLSL、GLSL 等语言转换为目标平台格式（SPIRV、DXIL 等）。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/07/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2195,7 +3063,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
